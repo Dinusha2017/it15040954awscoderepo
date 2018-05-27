@@ -38,33 +38,30 @@ public class AmazonClient {
     @PostConstruct
     private void setAmazonCredentials() {
         BasicAWSCredentials awsCreds = new BasicAWSCredentials(this.accessKey, this.secretKey);
-        s3Client =
-                AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+        s3Client = AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
     }
 
-    private File convertMultipartFileToFile(MultipartFile file) throws IOException{
-        File convertedFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convertedFile);
-        fos.write(file.getBytes());
-        fos.close();
+    private File convertMultipartFileToFile(MultipartFile pic) throws IOException{
+        File convertedFile = new File(pic.getOriginalFilename());
+        FileOutputStream fileOutputStream = new FileOutputStream(convertedFile);
+        fileOutputStream.write(pic.getBytes());
+        fileOutputStream.close();
         return convertedFile;
-    }
-
-    private String generateFileName(MultipartFile multipartFile){
-        return new Date().getTime() + "-" + multipartFile.getOriginalFilename().replace(" ", "_");
-    }
-
-    private void uploadPhotoTos3Bucket(String filename, File photo) {
-        s3Client.putObject(new PutObjectRequest(bucketName, filename, photo));
     }
 
     public void uploadPhoto(MultipartFile multipartFile){
         try{
-            File file = convertMultipartFileToFile(multipartFile);
-            String filename = generateFileName(multipartFile);
+            File photo = convertMultipartFileToFile(multipartFile);
+
+            //generate a unique name for each photo as photos with the same name can be uploaded
+            String filename = new Date().getTime() + "-" + multipartFile.getOriginalFilename().replace(" ", "_");
+
             String fileUrl = endpointUrl + "/" + bucketName + "/" + filename;
-            uploadPhotoTos3Bucket(filename, file);
-            file.delete();
+
+            //upload photo to S3 Bucket
+            s3Client.putObject(new PutObjectRequest(bucketName, filename, photo));
+
+            photo.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }

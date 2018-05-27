@@ -19,8 +19,8 @@ public class PhotoController {
     }
 
     @CrossOrigin
-    @PostMapping("/uploadPhoto")
-    public void uploadPhoto(@RequestPart(value = "file") MultipartFile pic){
+    @PostMapping("/photo")
+    public void uploadPhoto(@RequestPart(value = "pic") MultipartFile pic){
         this.amazonClient.uploadPhoto(pic);
     }
 }

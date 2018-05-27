@@ -5,10 +5,10 @@
         function uploadPhoto() {
 
             var formData = new FormData();
-            formData.append('file', $('#uploadPic')[0].files[0]);
+            formData.append('pic', $('#uploadPic')[0].files[0]);
 
             $.ajax({
-                url:"http://13.127.84.100:8080/uploadPhoto",
+                url:"http://13.127.84.100:8080/photo",
                 type:"POST",
                 data: formData,
                 enctype: 'multipart/form-data',

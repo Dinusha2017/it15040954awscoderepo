@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <script src="jquery-2.2.4.min.js"></script>
+    <script type="text/javascript">
+        function uploadPhoto() {
+
+            var formData = new FormData();
+            formData.append('file', $('#uploadPic')[0].files[0]);
+
+            $.ajax({
+                url:"http://13.127.84.100:8080/uploadPhoto",
+                type:"POST",
+                data: formData,
+                enctype: 'multipart/form-data',
+                processData: false,
+                contentType: false,
+                cache:false,
+                success: function(data) {
+                    alert("Photo Upload was successful");
+                    console.log(data);
+                },
+                error: function(data) {
+                    alert("Photo Upload was not successful");
+                    console.log(data);
+                }
+            });
+
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Photo Uploading Application</h1>
+    <form>
+        Upload Photo: <input type="file" id="uploadPic" accept="image/*" name="file">
+        <br><br>
+        <button type="button" onclick="uploadPhoto()">Upload</button>
+    </form>
+</body>
+</html>

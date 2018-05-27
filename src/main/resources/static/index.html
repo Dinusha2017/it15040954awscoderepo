@@ -8,7 +8,7 @@
             formData.append('pic', $('#uploadPic')[0].files[0]);
 
             $.ajax({
-                url:"http://13.127.84.100:8080/photo",
+                url:"http://localhost:8080/photo",
                 type:"POST",
                 data: formData,
                 enctype: 'multipart/form-data',

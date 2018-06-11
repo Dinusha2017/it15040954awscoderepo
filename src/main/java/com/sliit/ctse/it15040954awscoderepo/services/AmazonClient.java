@@ -20,6 +20,7 @@ public class AmazonClient {
 
     private AmazonS3 s3Client;
 
+    //Bind application property to variable during application initialization using @Value
     @Value("${amazonProperties.endpointUrl}")
     private String endpointUrl;
 
@@ -35,12 +36,17 @@ public class AmazonClient {
     @Value("${amazonProperties.region}")
     private String region;
 
+    //Use @PostConstruct to run method after the constructor is called, as variables marked with @Value are null in the constructor
+    //and these variables must be initialized before they can be used
+    //This method sets Amazon Credentials to the amazon client object
     @PostConstruct
     private void setAmazonCredentials() {
         BasicAWSCredentials awsCreds = new BasicAWSCredentials(this.accessKey, this.secretKey);
         s3Client = AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
     }
 
+    //converts Multipart file to file, so that the resultant file can be passed into the method that uploads photo to S3 Bucket,
+    //as this method accepts a parameter in the file format
     private File convertMultipartFileToFile(MultipartFile pic) throws IOException{
         File convertedFile = new File(pic.getOriginalFilename());
         FileOutputStream fileOutputStream = new FileOutputStream(convertedFile);
@@ -51,12 +57,11 @@ public class AmazonClient {
 
     public void uploadPhoto(MultipartFile multipartFile){
         try{
+            //convert Multipart file to file
             File photo = convertMultipartFileToFile(multipartFile);
 
-            //generate a unique name for each photo as photos with the same name can be uploaded
+            //generate a unique name for each photo, as the same photo and photos with the same name can be uploaded
             String filename = new Date().getTime() + "-" + multipartFile.getOriginalFilename().replace(" ", "_");
-
-            String fileUrl = endpointUrl + "/" + bucketName + "/" + filename;
 
             //upload photo to S3 Bucket
             s3Client.putObject(new PutObjectRequest(bucketName, filename, photo));

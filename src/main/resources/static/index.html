@@ -4,27 +4,34 @@
     <script type="text/javascript">
         function uploadPhoto() {
 
-            var formData = new FormData();
-            formData.append('pic', $('#uploadPic')[0].files[0]);
+            var allowedImageExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
 
-            $.ajax({
-                url:"http://ec2-13-232-82-13.ap-south-1.compute.amazonaws.com:8080/photo",
-                type:"POST",
-                data: formData,
-                enctype: 'multipart/form-data',
-                processData: false,
-                contentType: false,
-                cache:false,
-                success: function(data) {
-                    alert("Photo Upload was successful");
-                    console.log(data);
-                },
-                error: function(data) {
-                    alert("Photo Upload was not successful");
-                    console.log(data);
-                }
-            });
+            if(!allowedImageExtensions.test(document.getElementById('uploadPic').value)) {
+                alert('The type or extension of the file uploaded is not allowed. ' +
+                    'Please upload an image file which have one of the extensions: .jpg or .jpeg or .png or .gif or .bmp.');
+            }
+            else {
+                var formData = new FormData();
+                formData.append('pic', $('#uploadPic')[0].files[0]);
 
+                $.ajax({
+                    url:"http://ec2-13-232-82-13.ap-south-1.compute.amazonaws.com:8080/photo",
+                    type:"POST",
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache:false,
+                    success: function(data) {
+                        alert("Photo Upload was successful");
+                        console.log(data);
+                    },
+                    error: function(data) {
+                        alert("Photo Upload was not successful");
+                        console.log(data);
+                    }
+                });
+            }
         }
     </script>
 </head>
